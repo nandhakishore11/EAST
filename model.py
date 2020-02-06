@@ -21,6 +21,7 @@ def mean_image_subtraction(images, means=[123.68, 116.78, 103.94]):
     :param means:
     :return:
     '''
+    #Means values (123.68 etc) come from vgg16. these are values that must be subtracted from the images for this to work properly.
     num_channels = images.get_shape().as_list()[-1]
     if len(means) != num_channels:
       raise ValueError('len(means) must match the number of channels')
@@ -51,8 +52,8 @@ def model(images, weight_decay=1e-5, is_training=True):
                             normalizer_fn=slim.batch_norm,
                             normalizer_params=batch_norm_params,
                             weights_regularizer=slim.l2_regularizer(weight_decay)):
-            f = [end_points['pool5'], end_points['pool4'],
-                 end_points['pool3'], end_points['pool2']]
+            f = [end_points['pool5'], end_points['pool4'],    # As mentioned in the paper, these pool outputs are extracted from 
+                 end_points['pool3'], end_points['pool2']]    # vgg 16 (resnet here) and used to calculate g.
             for i in range(4):
                 print('Shape of f_{} {}'.format(i, f[i].shape))
             g = [None, None, None, None]
